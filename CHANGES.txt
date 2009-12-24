@@ -1,0 +1,40 @@
+=======
+CHANGES
+=======
+
+1.2.0 (2009-11-24)
+------------------
+
+- Added AfterExceptionCallEvent event
+
+
+1.1.1 (2009-08-28)
+------------------
+
+- Tring to get object instead of MethodType object for AfterCallEvent
+
+
+1.1.0 (2009-08-11)
+------------------
+
+- Added AfterCallEvent event
+
+
+1.0.3 (2009-04-17)
+------------------
+
+- Do no use zope.component.interfaces.IView
+
+
+1.0.1 (2008-03-28)
+------------------
+
+- Added buldout config for tests
+
+- Code moved to svn.zope.org
+
+
+1.0.0 (2008-02-02)
+------------------
+
+- Initial release

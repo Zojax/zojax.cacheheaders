@@ -1,0 +1,33 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <include package="zope.app.publication" />
+
+  <publisher
+     name="BROWSER"
+     factory=".publication.BrowserFactory"
+     methods="GET HEAD"
+     mimetypes="*"
+     priority="9" />
+
+  <!-- cache -->
+  <utility
+     provides=".interfaces.ISiteUID"
+     factory=".siteuid.SiteUID" />
+
+  <class class=".siteuid.SiteUID">
+    <allow attributes="uid" />
+  </class>
+
+  <class class=".siteuid.PersistentSiteUID">
+    <allow attributes="uid" />
+  </class>
+
+  <adapter
+     for="zope.location.interfaces.ILocation"
+     factory=".default.ModificationInfo" />
+
+  <adapter
+     for="*"
+     factory=".default.viewModificationInfo" />
+
+</configure>
