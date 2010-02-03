@@ -108,4 +108,16 @@ def afterCall(self, request, ob):
         self.annotateTransaction(txn, request, ob)
         txn.commit()
 
+oldHandleException = zopepublication.ZopePublication.handleException
+        
+def handleException(self, object, request, exc_info, retry_allowed=True):
+    orig = removeAllProxies(object)
+    oldHandleException(self, object, request, exc_info, retry_allowed=retry_allowed)
+    if type(orig) is MethodType:
+        notify(AfterCallEvent(orig.im_self, request))
+    else:
+        notify(AfterCallEvent(orig, request))
+
 zopepublication.ZopePublication.afterCall = afterCall
+
+zopepublication.ZopePublication.handleException = handleException
