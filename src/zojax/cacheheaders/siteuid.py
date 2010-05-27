@@ -16,7 +16,7 @@
 $Id$
 """
 import md5
-import time
+import datetime
 import persistent
 from zope import interface
 from zope.cachedescriptors.property import Lazy
@@ -32,7 +32,7 @@ class SiteUID(object):
         return self.generate()
 
     def generate(self):
-        self.uid = md5.md5(time.ctime()).hexdigest()
+        return md5.md5(datetime.datetime.now().isoformat()).hexdigest()
 
 
 class PersistentSiteUID(persistent.Persistent, SiteUID):
