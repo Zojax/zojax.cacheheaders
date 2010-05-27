@@ -32,8 +32,8 @@ class SiteUID(object):
         return self.generate()
 
     def generate(self):
-        return md5.md5(datetime.datetime.now().isoformat()).hexdigest()
-
+        self.uid = md5.md5(datetime.datetime.now().isoformat()).hexdigest()
+        return self.uid
 
 class PersistentSiteUID(persistent.Persistent, SiteUID):
     """ persistent site uid """
