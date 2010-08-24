@@ -11,6 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+from ZODB.POSException import ConnectionStateError
 """
 
 $Id$
@@ -80,7 +81,7 @@ class BrowserPublication(browser.BrowserPublication):
             notify(AfterExceptionCallEvent(orig.im_self, request))
         else:
             notify(AfterExceptionCallEvent(orig, request))
-        
+
 
 class BrowserFactory(object):
     interface.implements(IRequestPublicationFactory)
@@ -96,10 +97,13 @@ class BrowserFactory(object):
 
 def afterCall(self, request, ob):
     orig = removeAllProxies(ob)
-    if type(orig) is MethodType:
-        notify(AfterCallEvent(orig.im_self, request))
-    else:
-        notify(AfterCallEvent(orig, request))
+    try:
+        if type(orig) is MethodType:
+            notify(AfterCallEvent(orig.im_self, request))
+        else:
+            notify(AfterCallEvent(orig, request))
+    except ConnectionStateError:
+        pass
 
     txn = transaction.get()
     if txn.isDoomed():
@@ -109,7 +113,7 @@ def afterCall(self, request, ob):
         txn.commit()
 
 oldHandleException = zopepublication.ZopePublication.handleException
-        
+
 def handleException(self, object, request, exc_info, retry_allowed=True):
     orig = removeAllProxies(object)
     oldHandleException(self, object, request, exc_info, retry_allowed=retry_allowed)
