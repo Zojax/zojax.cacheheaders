@@ -72,16 +72,6 @@ class BrowserPublication(browser.BrowserPublication):
 
         return super(BrowserPublication, self).afterCall(request, ob)
 
-    def handleException(self, object, request, exc_info, retry_allowed=True):
-        super(BrowserPublication, self).handleException(
-            object, request, exc_info, retry_allowed)
-
-        orig = removeAllProxies(object)
-        if type(orig) is MethodType:
-            notify(AfterExceptionCallEvent(orig.im_self, request))
-        else:
-            notify(AfterExceptionCallEvent(orig, request))
-
 
 class BrowserFactory(object):
     interface.implements(IRequestPublicationFactory)
