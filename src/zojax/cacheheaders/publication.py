@@ -114,4 +114,4 @@ def handleException(self, object, request, exc_info, retry_allowed=True):
 
 zopepublication.ZopePublication.afterCall = afterCall
 
-zopepublication.ZopePublication.handleException = handleException
+#zopepublication.ZopePublication.handleException = handleException
