@@ -25,7 +25,7 @@ from datetime import datetime
 
 from zope import interface
 from zope.event import notify
-from zope.component import queryUtility, queryMultiAdapter
+from zope.component import queryUtility, queryMultiAdapter, getUtility
 from zope.location import LocationProxy
 from zope.proxy import removeAllProxies
 from zope.security.checker import ProxyFactory
@@ -45,6 +45,9 @@ from zope.app.publisher.browser import queryDefaultViewName
 from zope.publisher.interfaces import IExceptionSideEffects
 
 from ZODB.POSException import ConnectionStateError, ReadOnlyError, ConflictError
+from ZODB.interfaces import IDatabase
+#from ZODB.POSException import ReadOnlyError
+from zope.cachedescriptors.property import Lazy
 
 from interfaces import ICacheStrategy, AfterCallEvent #, AfterExceptionCallEvent
 
@@ -53,6 +56,10 @@ class BrowserPublication(browser.BrowserPublication):
 
     def beforeTraversal(self, request):
         self.dt = datetime.now()
+
+        if self.isReadonly:
+            request.response.setHeader('X-Readonly', 'true')
+
         super(BrowserPublication, self).beforeTraversal(request)
 
     def callObject(self, request, ob):
@@ -83,6 +90,20 @@ class BrowserPublication(browser.BrowserPublication):
         request.response.setHeader('X-Generated-Time', '%0.5f sec'%secs)
 
         return super(BrowserPublication, self).afterCall(request, ob)
+
+    @Lazy
+    def isReadonly(self):
+        readonly = False
+
+        db = getUtility(IDatabase)
+        conn = db.open()
+
+        if conn.isReadOnly():
+            readonly = True
+
+        conn.close()
+
+        return readonly
 
 
 class BrowserFactory(object):
