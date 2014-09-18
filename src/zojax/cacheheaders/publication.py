@@ -26,6 +26,7 @@ from datetime import datetime
 from zope import interface
 from zope.event import notify
 from zope.component import queryUtility, queryMultiAdapter, getUtility
+from zope.component.interfaces import ComponentLookupError
 from zope.location import LocationProxy
 from zope.proxy import removeAllProxies
 from zope.security.checker import ProxyFactory
@@ -95,13 +96,16 @@ class BrowserPublication(browser.BrowserPublication):
     def isReadonly(self):
         readonly = False
 
-        db = getUtility(IDatabase)
-        conn = db.open()
+        try:
+            db = getUtility(IDatabase)
+            conn = db.open()
 
-        if conn.isReadOnly():
-            readonly = True
+            if conn.isReadOnly():
+                readonly = True
 
-        conn.close()
+            conn.close()
+        except ComponentLookupError:
+            pass
 
         return readonly
 
